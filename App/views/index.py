@@ -39,8 +39,6 @@ def health_check():
 
 @index_views.route('/get-pronunciation/<string:word>', methods=['GET'])
 def get_pronunciation(word: str):
-    if len(word_list) > 1 and not headword_exists_in_list(word_list, word):
-        return jsonify(headword=word, pronunciation=None, status="Not Found")
     result = get_entry(word)
     pronunciation = result.pronunciation if result else None
     status = "OK" if result else "Not Found"
