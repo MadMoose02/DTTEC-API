@@ -4,7 +4,7 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_entry, headword_exists )
+from App.controllers import ( create_entry, headword_exists_in_list )
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -24,7 +24,7 @@ def initialize():
             if headword == '' or headword is None or len(headword) < 1: continue
             if headword in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']: continue
             if headword == last_headword: continue
-            if headword_exists(word_list, headword): continue
+            if headword_exists_in_list(word_list, headword): continue
             last_headword = headword
             pronunciation = entry['pronunciation']
             if pronunciation == '' or pronunciation is None or len(pronunciation) < 1: continue

@@ -7,10 +7,10 @@ def create_entry(headword, pronunciation):
     db.session.commit()
     return new_entry
 
-def get_entry_by_headword(word):
+def get_entry(word):
     return Entry.query.filter_by(headword=word).first()
 
-def headword_exists(master, headword):
+def headword_exists_in_list(master, headword):
     return binary_search(master, headword)
 
 def binary_search(word_list: list, word: str):
