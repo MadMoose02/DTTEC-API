@@ -3,7 +3,7 @@ import pytest, logging, unittest
 from App.main import create_app
 from App.database import db, create_db
 from App.models import Entry
-from App.controllers import ( create_entry, get_entry, headword_exists )
+from App.controllers import ( create_entry, get_entry )
 
 
 LOGGER = logging.getLogger(__name__)
