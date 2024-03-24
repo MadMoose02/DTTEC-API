@@ -1,9 +1,9 @@
 
 services:
 - type: web
-  name: flask-postgres-api
+  name: dttec-rest-api
   env: python
-  repo: https://github.com/uwidcit/flaskmvc.git
+  repo: https://github.com/MadMoose02/DTTEC-API.git
   plan: free
   branch: main
   healthCheckPath: /healthcheck
@@ -40,4 +40,4 @@ envVarGroups:
 databases:
 - name: flask-postgres-api-db
   plan: free
-  databaseName: mydb
+  databaseName: dttec-db
