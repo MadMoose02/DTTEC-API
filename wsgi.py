@@ -1,10 +1,10 @@
-import click, pytest, sys
+from json import load
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users )
+from App.controllers import ( create_entry, headword_exists )
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -16,54 +16,22 @@ migrate = get_migrate(app)
 def initialize():
     db.drop_all()
     db.create_all()
-    create_user('bob', 'bobpass')
-    print('database intialized')
-
-'''
-User Commands
-'''
-
-# Commands can be organized using groups
-
-# create a group, it would be the first argument of the comand
-# eg : flask user <command>
-user_cli = AppGroup('user', help='User object commands') 
-
-# Then define the command and any parameters and annotate it with the group (@)
-@user_cli.command("create", help="Creates a user")
-@click.argument("username", default="rob")
-@click.argument("password", default="robpass")
-def create_user_command(username, password):
-    create_user(username, password)
-    print(f'{username} created!')
-
-# this command will be : flask user create bob bobpass
-
-@user_cli.command("list", help="Lists users in the database")
-@click.argument("format", default="string")
-def list_user_command(format):
-    if format == 'string':
-        print(get_all_users())
-    else:
-        print(get_all_users_json())
-
-app.cli.add_command(user_cli) # add the group to the cli
-
-'''
-Test Commands
-'''
-
-test = AppGroup('test', help='Testing commands') 
-
-@test.command("user", help="Run User tests")
-@click.argument("type", default="all")
-def user_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "UserUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-    
-
-app.cli.add_command(test)
+    word_list = []
+    last_headword = ""
+    with open("DTTEC_FULL.json", "r", encoding="utf-8") as f:
+        for entry in load(f): 
+            headword = entry['headword'].split(" ")[0]
+            if headword == '' or headword is None or len(headword) < 1: continue
+            if headword in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']: continue
+            if headword == last_headword: continue
+            if headword_exists(word_list, headword): continue
+            last_headword = headword
+            pronunciation = entry['pronunciation']
+            if pronunciation == '' or pronunciation is None or len(pronunciation) < 1: continue
+            if len(pronunciation) > len(headword) + 5: continue
+            pronunciation = pronunciation[0]
+            print(f"\r[{len(word_list) + 1}] {entry['headword']} : {pronunciation}", end=" " * 20)
+            create_entry(entry['headword'], pronunciation)
+            word_list.append(headword)
+            
+    print('\nDatabase intialised')
