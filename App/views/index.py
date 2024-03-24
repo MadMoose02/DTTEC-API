@@ -1,12 +1,13 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify
+from json import load
+from flask import Blueprint, jsonify
 from App.models import db
-from App.controllers import create_user
+from App.controllers import create_entry, get_entry_by_headword, headword_exists
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
 @index_views.route('/', methods=['GET'])
 def index_page():
-    return render_template('index.html')
+    return jsonify(message="Dictionary for English/Creole of Trinidad and Tobago", status=200)
 
 @index_views.route('/init', methods=['GET'])
 def init():
@@ -34,4 +35,11 @@ def init():
 
 @index_views.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({'status':'healthy'})
+    return jsonify(status="OK", message="The server is up and running", code=200)
+
+@index_views.route('/get-pronunciation/<string:word>', methods=['GET'])
+def get_pronunciation(word: str):
+    result = get_entry_by_headword(word)
+    pronunciation = result.pronunciation if result else None
+    status = "OK" if result else "Not Found"
+    return jsonify(headword=word, pronunciation=pronunciation, status=status)
