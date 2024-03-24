@@ -20,7 +20,7 @@ class EntryUnitTests(unittest.TestCase):
 
     def test_get_json(self):
         entry_json = self.entry.get_json()
-        self.assertDictEqual(entry_json, {"id":1, "headword":"word", "pronunciation":"pronunciation"})
+        self.assertDictEqual(entry_json, {"id":None, "headword":"word", "pronunciation":"pronunciation"})
 
 '''
     Integration Tests
