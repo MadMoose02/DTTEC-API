@@ -45,5 +45,5 @@ class EntryIntegrationTests(unittest.TestCase):
         assert entry.headword == self.headword
 
     def test_headword_exists(self):
-        assert get_entry(self.headword) == self.headword
+        assert get_entry(self.headword).headword == self.headword
         assert get_entry("test") == None
