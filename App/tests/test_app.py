@@ -1,17 +1,9 @@
-import os, tempfile, pytest, logging, unittest
-from werkzeug.security import check_password_hash, generate_password_hash
+import pytest, logging, unittest
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import User
-from App.controllers import (
-    create_user,
-    get_all_users_json,
-    login,
-    get_user,
-    get_user_by_username,
-    update_user
-)
+from App.models import Entry
+from App.controllers import ( create_entry, get_entry, headword_exists )
 
 
 LOGGER = logging.getLogger(__name__)
@@ -19,28 +11,16 @@ LOGGER = logging.getLogger(__name__)
 '''
    Unit Tests
 '''
-class UserUnitTests(unittest.TestCase):
-
-    def test_new_user(self):
-        user = User("bob", "bobpass")
-        assert user.username == "bob"
-
-    # pure function no side effects or integrations called
-    def test_get_json(self):
-        user = User("bob", "bobpass")
-        user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "username":"bob"})
+class EntryUnitTests(unittest.TestCase):
     
-    def test_hashed_password(self):
-        password = "mypass"
-        hashed = generate_password_hash(password, method='sha256')
-        user = User("bob", password)
-        assert user.password != password
+    entry: Entry = Entry("word", "pronunciation")
 
-    def test_check_password(self):
-        password = "mypass"
-        user = User("bob", password)
-        assert user.check_password(password)
+    def test_new_entry(self):
+        assert self.entry.headword == "word"
+
+    def test_get_json(self):
+        entry_json = self.entry.get_json()
+        self.assertDictEqual(entry_json, {"headword":"word", "pronunciation":"pronunciation"})
 
 '''
     Integration Tests
@@ -55,25 +35,15 @@ def empty_db():
     yield app.test_client()
     db.drop_all()
 
-
-def test_authenticate():
-    user = create_user("bob", "bobpass")
-    assert login("bob", "bobpass") != None
-
-class UsersIntegrationTests(unittest.TestCase):
+class EntryIntegrationTests(unittest.TestCase):
+    
+    headword = "word"
+    pronunciation = "pronunciation"
 
     def test_create_user(self):
-        user = create_user("rick", "bobpass")
-        assert user.username == "rick"
+        entry = create_entry(self.headword, self.pronunciation)
+        assert entry.headword == self.headword
 
-    def test_get_all_users_json(self):
-        users_json = get_all_users_json()
-        self.assertListEqual([{"id":1, "username":"bob"}, {"id":2, "username":"rick"}], users_json)
-
-    # Tests data changes in the database
-    def test_update_user(self):
-        update_user(1, "ronnie")
-        user = get_user(1)
-        assert user.username == "ronnie"
-        
-
+    def test_headword_exists(self):
+        assert get_entry(self.headword) == self.headword
+        assert get_entry("test") == None
