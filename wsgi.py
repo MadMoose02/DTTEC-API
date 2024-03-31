@@ -21,6 +21,7 @@ def initialize():
     with open("DTTEC_FULL.json", "r", encoding="utf-8") as f:
         for entry in load(f): 
             headword = entry['headword'].split(" ")[0]
+            if len(headword) > 20: continue
             if headword == '' or headword is None or len(headword) < 1: continue
             if headword in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']: continue
             if headword == last_headword: continue
@@ -30,8 +31,8 @@ def initialize():
             if pronunciation == '' or pronunciation is None or len(pronunciation) < 1: continue
             if len(pronunciation) > len(headword) + 5: continue
             pronunciation = pronunciation[0]
-            print(f"\r[{len(word_list) + 1}] {entry['headword']} : {pronunciation}", end=" " * 20)
-            create_entry(entry['headword'], pronunciation)
+            print(f"\r[{len(word_list) + 1}] {headword} : {pronunciation}", end=" " * 20)
+            create_entry(headword, pronunciation)
             word_list.append(headword)
             
     print('\nDatabase intialised')
