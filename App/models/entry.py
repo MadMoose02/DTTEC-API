@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, Integer
 class Entry(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     headword =  Column(String(20), nullable=False)
-    pronunciation = Column(String(20), nullable=False)
+    pronunciation = Column(String(25), nullable=False)
 
     def __init__(self, headword, pronunciation):
         self.headword = headword
