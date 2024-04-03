@@ -30,7 +30,7 @@ def init():
             if len(pronunciation) > len(headword) + 5: continue
             pronunciation = pronunciation[0]
             print(f"\r[{len(word_list) + 1}] {headword} : {pronunciation}", end=" " * 20)
-            create_entry(headword, pronunciation)
+            create_entry(str(headword).lower(), pronunciation)
             word_list.append(headword)
             
     return jsonify(message='Databse initialised')
