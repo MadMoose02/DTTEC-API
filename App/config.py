@@ -15,7 +15,7 @@ def load_config():
     spec.loader.exec_module(config_module)
 
     if config['ENV'] == "DEVELOPMENT":
-        config['SQLALCHEMY_DATABASE_URI'] = config_module.DB_HOST
+        config['SQLALCHEMY_DATABASE_URI'] = config_module.SQLALCHEMY_DATABASE_URI
         config['SECRET_KEY'] = config_module.SECRET_KEY
         config['JWT_SECRET_KEY'] = config_module.SECRET_KEY
     else:
@@ -23,6 +23,9 @@ def load_config():
         config['SECRET_KEY'] = os.environ.get('SECRET_KEY', config_module.SECRET_KEY)
         config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', config_module.SECRET_KEY)
         config['DEBUG'] = config['ENV'].upper() != 'PRODUCTION'
+    
+    print(" * Environment: " + config['ENV'])
+    print(" * Database URI: " + config['SQLALCHEMY_DATABASE_URI'])
 
     # Default configurations that don't depend on the environment
     config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
