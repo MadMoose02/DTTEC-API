@@ -21,14 +21,16 @@ def initialize():
     ipa_map = load(open("ipa-map.json", "r", encoding="utf-8"))
     with open("DTTEC_FULL.json", "r", encoding="utf-8") as f:
         for entry in load(f): 
-            headword      = str(entry['headword'].split(" ")[0]).lower()
+            headword      = str(entry['headword'].split(" ")[0]).lower().strip()
             pronunciation = entry['pronunciation'][0] if entry['pronunciation'] else None
             h_len         = len(headword)
             
             # Check headword length. Skip if too long, shorter than 4 chars, is a number or already added
             if  headword == '' or \
                 headword is None or \
-                4 > len(headword) > 20: continue
+                len(headword) > 20 or \
+                len(headword) < 4: continue
+            
             if headword in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']: continue
             if headword == last_headword or headword in word_list: continue
             last_headword = headword
@@ -41,16 +43,24 @@ def initialize():
             # Convert any of the detected incorrect IPA symbols to the correct one
             for k, v in ipa_map.items():
                 if k in pronunciation:
-                    pronunciation = pronunciation.replace(k, v)    
+                    pronunciation = pronunciation.replace(k, v)  
             
             # Show entry being added
             print(f"\r[{len(word_list) + 1}] {headword} : {pronunciation}", end=" " * 20)
-            create_entry(str(headword).lower(), pronunciation)
+            create_entry(headword, pronunciation)
             word_list.append(headword)
             
             # Add alternate spellings as well
             for alternate in entry['alternate_spelling']:
-                create_entry(str(alternate).lower(), pronunciation)
+                alternate = str(alternate).lower().strip()
+                
+                # Enforce same rules for alternate spellings as for headwords
+                if  alternate == '' or \
+                    alternate is None or \
+                    len(alternate) > 20 or \
+                    len(alternate) < 4: continue
+                
+                create_entry(alternate, pronunciation)
                 print(f"\r[{len(word_list) + 1}] {headword} : {pronunciation}", end=" " * 20)
                 word_list.append(alternate)
             
