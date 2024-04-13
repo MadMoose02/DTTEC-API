@@ -154,3 +154,6 @@ cython_debug/
 #.idea/
 
 node_modules/
+
+# Local .env file
+.env
