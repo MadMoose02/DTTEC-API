@@ -63,12 +63,13 @@ def init():
                 word_list.append(alternate)
             
     print('\nDatabase intialised')
+    return jsonify(status="OK", message="Database intialised", code=200)
 
 @index_views.route('/health', methods=['GET'])
 def health_check():
     return jsonify(status="OK", message="The server is up and running", code=200)
 
-@index_views.route('/get-pronunciation/<string:word>', methods=['GET'])
+@index_views.route('/get/<string:word>', methods=['GET'])
 def get_pronunciation(word: str):
     result: Entry = get_entry(word)
     pronunciation = result.pronunciation if result else None
